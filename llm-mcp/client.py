@@ -38,7 +38,7 @@ async def main():
             while True:
                 user_prompt = input("\nUser:")
 
-                if user_prompt == "exit":
+                if user_prompt.lower() == "exit":
                     break
 
                 tool_descriptions = json.dumps(tools, indent=2)
