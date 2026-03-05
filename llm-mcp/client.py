@@ -15,7 +15,8 @@ client = Groq(api_key=os.getenv("API_KEY"))
 
 
 async def main():
-    server = StdioServerParameters(command="python", args=["server.py"])
+    # server = StdioServerParameters(command="python", args=["server.py"])
+    server = StdioServerParameters(host="127.0.0.1", port=8050)
 
     async with stdio_client(server) as (read, write):
         async with ClientSession(read, write) as session:
