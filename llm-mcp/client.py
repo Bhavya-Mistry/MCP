@@ -81,8 +81,7 @@ async def main():
 
                 result = await session.call_tool(tool_name, arguments)
 
-                ic("\nTool Result:")
-                ic(result.content[0].text)
+                ic("Tool Result:", result.content[0].text)
 
 
 asyncio.run(main())
