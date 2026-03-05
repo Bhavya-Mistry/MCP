@@ -18,5 +18,18 @@ def read_files(path: str) -> str:
         return f.read()
 
 
+@mcp.tool()
+def file_info(path: str) -> dict:
+    """Returns metada about a file"""
+
+    stat = os.stat(path)
+
+    return {
+        "size_bytes": stat.st_size,
+        "is_directory": os.path.isdir(path),
+        "last_modified": stat.st_mtime,
+    }
+
+
 if __name__ == "__main__":
     mcp.run()
