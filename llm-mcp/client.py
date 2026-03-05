@@ -15,7 +15,7 @@ client = Groq(api_key=os.getenv("API_KEY"))
 
 
 async def main():
-    server = StdioServerParameters(command="python", args=["server.py"])
+    server = StdioServerParameters(command="python", args=["llm-mcp\server.py"])
 
     async with stdio_client(server) as (read, write):
         async with ClientSession(read, write) as session:
