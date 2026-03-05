@@ -31,5 +31,25 @@ def file_info(path: str) -> dict:
     }
 
 
+@mcp.tool()
+def search_files(directory: str, keyword: str) -> dict:
+    """Search files in a directory for a keyword"""
+    matches = []
+
+    if not os.path.exists(directory):
+        return {"error": "directory does not exist"}
+
+    for file in os.listdir(directory):
+        path = os.path.join(directory, file)
+        if os.path.isfile(path):
+            with open(path, "r", errors="ignore") as f:
+                content = f.read()
+
+                if keyword in content:
+                    matches.append(file)
+
+    return {"matches": matches}
+
+
 if __name__ == "__main__":
     mcp.run()
