@@ -19,6 +19,7 @@ async def main():
                 ic(tool.name)
 
             # result = await session.call_tool("list_files", {"directory": "."})
+            # # ic(result.content[0].text)
 
             result = await session.call_tool("file_info", {"path": "server.py"})
 
