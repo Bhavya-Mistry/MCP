@@ -17,21 +17,26 @@ async def main():
 
             tools_result = await session.list_tools()
 
+            print("-" * 50)
+            ic(tools_result.tools)
+            print("-" * 50)
+
             ic("Tools available are:")
 
             for tool in tools_result.tools:
                 ic(tool.name)
 
-            add_result = await session.call_tool("add", {"a": 10, "b": 5})
-            multiply_result = await session.call_tool("multiply", {"a": 10, "b": 20})
+            # add_result = await session.call_tool("add", {"a": 10, "b": 5})
+            # multiply_result = await session.call_tool("multiply", {"a": 10, "b": 20})
+            result = await session.call_tool("multiply", {"a": 10, "b": 20})
 
-            ic("Add:", add_result.content[0].text)
-            ic("Multiply:", multiply_result.content[0].text)
-            # print("-" * 50)
-            # ic("DEBUG:", result)
-            # print("-" * 50)
-            # ic("DEBUG:", result.content)
-            # print("-" * 50)
+            ic("Add:", result.content[0].text)
+            ic("Multiply:", result.content[0].text)
+            print("-" * 50)
+            ic("DEBUG:", result)
+            print("-" * 50)
+            ic("DEBUG:", result.content)
+            print("-" * 50)
 
 
 asyncio.run(main())
