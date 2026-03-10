@@ -227,3 +227,5 @@ __pycache__/
 # OS files
 .DS_Store
 Thumbs.db
+*.pdf
+paper-mind\chroma_db\chroma.sqlite3
