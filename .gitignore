@@ -228,4 +228,4 @@ __pycache__/
 .DS_Store
 Thumbs.db
 *.pdf
-paper-mind/chroma_db
+paper-mind/chroma_db/chroma.sqlite3
