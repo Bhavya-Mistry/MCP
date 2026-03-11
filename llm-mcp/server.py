@@ -32,7 +32,7 @@ def read_files(path: str) -> str:
 
 @mcp.tool()
 def file_info(path: str) -> dict:
-    """Returns metada about a file"""
+    """Returns metadata about a file"""
 
     stat = os.stat(path)
 
@@ -64,5 +64,5 @@ def search_files(directory: str, keyword: str) -> dict:
 
 
 if __name__ == "__main__":
-    mcp.run(host="127.0.0.1", port=8050)
+    mcp.run(transport="streamable-http")
     # mcp.run()
