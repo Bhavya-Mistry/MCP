@@ -1,87 +1,78 @@
-import asyncio
-import json
-from groq import Groq
+from langchain_mcp_adapters.client import MultiServerMCPClient
+from langchain.agents import create_agent
+from langchain_groq import ChatGroq
 from icecream import ic
 
-import os
 from dotenv import load_dotenv
+import os
+import asyncio
 
-from mcp import ClientSession, StdioServerParameters
-from mcp.client.stdio import stdio_client
-
+from sympy import true
 
 load_dotenv()
-client = Groq(api_key=os.getenv("API_KEY"))
+
+API_KEY = os.getenv("API_KEY")
 
 
 async def main():
-    server = StdioServerParameters(command="python", args=["llm-mcp\server.py"])
+    client = MultiServerMCPClient(
+        {
+            "add": {
+                "url": "http://127.0.0.1:8000/mcp",
+                "transport": "streamable_http",
+            },
+            "multiply": {
+                "url": "http://127.0.0.1:8000/mcp",
+                "transport": "streamable_http",
+            },
+            "list_files": {
+                "url": "http://127.0.0.1:8000/mcp",
+                "transport": "streamable_http",
+            },
+            "read_files": {
+                "url": "http://127.0.0.1:8000/mcp",
+                "transport": "streamable_http",
+            },
+            "file_info": {
+                "url": "http://127.0.0.1:8000/mcp",
+                "transport": "streamable_http",
+            },
+            "search_files": {
+                "url": "http://127.0.0.1:8000/mcp",
+                "transport": "streamable_http",
+            },
+        }
+    )
 
-    async with stdio_client(server) as (read, write):
-        async with ClientSession(read, write) as session:
-            await session.initialize()
+    tools = await client.get_tools()
+    ic(tools)
+    print("_" * 80)
 
-            tools_result = await session.list_tools()
+    model = ChatGroq(model="openai/gpt-oss-20b", api_key=API_KEY)
+    ic(model)
+    print("_" * 80)
 
-            tools = []
+    agent = create_agent(
+        model, tools, system_prompt="ONLY USE AVAILABLE TOOLS AND REPLY NOTHING ELSE"
+    )
+    ic(agent)
+    print("_" * 80)
 
-            for tool in tools_result.tools:
-                tools.append(
-                    {
-                        "name": tool.name,
-                        "description": tool.description,
-                        "input_schema": tool.inputSchema,
-                    }
-                )
-            ic("Available Tools:", [t["name"] for t in tools])
+    ic("Enter EXIT to quit")
 
-            while True:
-                user_prompt = input("\nUser:")
+    while True:
+        user_prompt = input("User:\n")
 
-                if user_prompt.lower() == "exit":
-                    break
+        if user_prompt.lower() == "exit":
+            break
 
-                tool_descriptions = json.dumps(tools, indent=2)
-
-                system_prompt = f"""
-                You are an AI agent that can use tools.
-                If no suitable tool exists, do NOT call any tool.
-                Respond with a message explaining the limitation.
-
-                Available tools:
-                {tool_descriptions}
-
-                If a tool is needed, respond ONLY with JSON:
-
-                {{
-                  "tool": "tool_name",
-                  "arguments": {{ }}
-                }}
-
-                Do not explain anything.
-                """
-
-                response = client.chat.completions.create(
-                    model="llama-3.1-8b-instant",
-                    messages=[
-                        {"role": "system", "content": system_prompt},
-                        {"role": "user", "content": user_prompt},
-                    ],
-                    temperature=0,
-                )
-
-                message = response.choices[0].message.content
-
-                ic(message)
-
-                tool_call = json.loads(message)
-
-                tool_name = tool_call["tool"]
-                arguments = tool_call["arguments"]
-
-                result = await session.call_tool(tool_name, arguments)
-
-                ic("Tool Result:", result.content[0].text)
+        try:
+            response = await agent.ainvoke(
+                {"messages": [{"role": "user", "content": user_prompt}]}
+            )
+            ic("Agent:", response["messages"][-1].content)
+        except Exception as e:
+            ic(e)
 
 
 asyncio.run(main())
