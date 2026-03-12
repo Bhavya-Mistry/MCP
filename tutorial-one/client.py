@@ -1,7 +1,6 @@
 import asyncio
-from mcp import ClientSession, StdioServerParameters
-from mcp.client.stdio import stdio_client
-
+from mcp.stdio import ClientSession, StdioServerParameters
+from mcp.stdio import stdio_client
 
 async def main():
     server = StdioServerParameters(command="python", args=["server.py"])
@@ -17,15 +16,10 @@ async def main():
             for tool in tools_result.tools:
                 ic(tool.name)
 
-            # result = await session.call_tool("list_files", {"directory": "."})
-
-            # result = await session.call_tool("file_info", {"path": "server.py"})
-
             result = await session.call_tool(
                 "search_files", {"directory": ".", "keyword": "FastMCP"}
             )
 
             ic(result.content[0].text)
-
 
 asyncio.run(main())
