@@ -109,7 +109,7 @@ project/
 └── README.md
 ```
 
-
+> You can skip this setup phase if you have **Claude Desktop** installed in your system
 
 ## ⚙️ Setup
 
