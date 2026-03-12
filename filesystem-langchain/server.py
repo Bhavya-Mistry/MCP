@@ -65,4 +65,4 @@ def search_files(directory: str, keyword: str) -> dict:
 
 if __name__ == "__main__":
     mcp.run(transport="streamable-http")
-    # mcp.run()
+    # mcp.run(transport="stdio")
