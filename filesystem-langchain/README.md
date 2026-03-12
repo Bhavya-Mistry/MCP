@@ -52,7 +52,7 @@ A modular AI agent system that connects a **LangChain-powered LLM** to an **MCP 
              ▼
 [Tool Discovery]
   └─> Client connects to the MCP server over streamable HTTP
-  └─> All 6 tools are fetched dynamically with their schemas
+  └─> All tools are fetched dynamically with their schemas
   └─> No tools are hardcoded on the client side
 
              │
@@ -68,7 +68,6 @@ A modular AI agent system that connects a **LangChain-powered LLM** to an **MCP 
   └─> The user prompt is passed to the agent as a message
   └─> The LLM selects the appropriate tool based on intent
   └─> Tool arguments are inferred automatically from the prompt
-  └─> The MCP client routes the call to the correct server endpoint
 
              │
              ▼
@@ -175,4 +174,34 @@ Agent: file1.txt
 User:
 exit
 ```
+
+## 🖥️ Alternative Way — Use with Claude Desktop
+
+You can skip the client entirely and connect the MCP server directly to **Claude Desktop**.
+
+From the project root, run:
+
+```bash
+uv run mcp install server.py
+```
+
+```
+[Install Command]
+  └─> Registers server.py as an MCP server in Claude's config file
+  └─> All tools are made available to Claude Desktop automatically
+
+             │
+             ▼
+[Restart Claude Desktop]
+  └─> Claude reads the updated config on launch
+  └─> Tools from server.py are discovered and loaded
+
+             │
+             ▼
+[Chat with Claude]
+  └─> Claude uses the tools natively — no terminal or client.py needed
+  └─> Same tools, same results
+```
+
+> This is the quickest way to use the server if you already have Claude Desktop installed.
 
