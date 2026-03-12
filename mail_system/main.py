@@ -1,8 +1,7 @@
 import os
 import smtplib
 from email.message import EmailMessage
-from github import Github
-import os
+from github import Github, GithubException
 
 from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
@@ -58,7 +57,7 @@ def create_branch(base_branch: str, new_branch: str) -> str:
         return f"SUCCESS, Branch '{new_branch}' created from '{base_branch}' in {repo_name}"
 
     except Exception as e:
-        print("Error: ", e)
+        return f"Error: {e}"
 
 
 @mcp.tool()
@@ -74,7 +73,7 @@ def create_pull_request(
 
         return f"SUCCESS, PR #{pr.number} created from {head_branch} to {base_branch}"
     except Exception as e:
-        print("Error: ", e)
+        return f"Error: {e}"
 
 
 @mcp.tool()
@@ -82,20 +81,31 @@ def commit_file(branch: str, file_path: str, content: str, message: str) -> str:
     """Create or update a file in a branch"""
 
     try:
-        contents = repo.get_contents(file_path, ref=branch)
-
-        repo.update_file(
-            path=file_path,
-            message=message,
-            content=content,
-            sha=contents.sha,
-            branch=branch,
-        )
-
-        return f"Updated {file_path} in {branch}"
+        try:
+            contents = repo.get_contents(file_path, ref=branch)
+            # File exists — update it
+            repo.update_file(
+                path=file_path,
+                message=message,
+                content=content,
+                sha=contents.sha,
+                branch=branch,
+            )
+            return f"Updated {file_path} in {branch}"
+        except GithubException as e:
+            if e.status == 404:
+                # File does not exist — create it
+                repo.create_file(
+                    path=file_path,
+                    message=message,
+                    content=content,
+                    branch=branch,
+                )
+                return f"Created {file_path} in {branch}"
+            raise
 
     except Exception as e:
-        print("Error: ", e)
+        return f"Error: {e}"
 
 
 @mcp.tool()
