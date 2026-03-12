@@ -1,4 +1,4 @@
-# 📬 Mail System MCP Agent
+# 📬 MCP Agent
 
 A modular AI agent system that connects a **LangChain-powered LLM** to a **FastMCP tool server** via streamable HTTP. The agent can send emails and interact with GitHub repositories — discovering and calling all tools dynamically at runtime with no hardcoded logic on the client side.
 
