@@ -174,7 +174,7 @@ User:
 exit
 ```
 
-## 🖥️ Alternative Way — Use with Claude Desktop
+## 🖥️ Alternative Setup — Use with Claude Desktop
 
 You can skip the client entirely and connect the MCP server directly to **Claude Desktop**.
 
