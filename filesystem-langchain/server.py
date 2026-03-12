@@ -45,20 +45,24 @@ def file_info(path: str) -> dict:
 
 @mcp.tool()
 def search_files(directory: str, keyword: str) -> dict:
-    """Search files in a directory for a keyword"""
+    """Search files in a directory and all subdirectories for a keyword"""
     matches = []
 
     if not os.path.exists(directory):
         return {"error": "directory does not exist"}
 
-    for file in os.listdir(directory):
-        path = os.path.join(directory, file)
-        if os.path.isfile(path):
-            with open(path, "r", errors="ignore") as f:
-                content = f.read()
+    for root, dirs, files in os.walk(directory):
+        for file in files:
+            path = os.path.join(root, file)
+
+            try:
+                with open(path, "r", errors="ignore") as f:
+                    content = f.read()
 
                 if keyword in content:
-                    matches.append(file)
+                    matches.append(path)  # returning full path is better
+            except Exception:
+                pass  # skip unreadable files
 
     return {"matches": matches}
 

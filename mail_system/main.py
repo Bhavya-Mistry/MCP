@@ -2,6 +2,7 @@ import os
 import smtplib
 from email.message import EmailMessage
 from github import Github
+import os
 
 from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
