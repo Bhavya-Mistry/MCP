@@ -119,7 +119,7 @@ mail_system/
 
 ## ⚙️ Setup
 
-> You can skip this setup phase and jump to the next section if you have **Claude Desktop** installed in your system.
+> You can skip this setup phase (you still need .env file) and jump to the next section if you have **Claude Desktop** installed in your system.
 
 ### 1. Install dependencies
 
@@ -235,3 +235,7 @@ uv run mcp install main.py
 ```
 
 > This is the quickest way to use the server if you already have Claude Desktop installed.
+
+## 🎬 Demo
+
+![Demo 1](./demo/gif1.gif)
