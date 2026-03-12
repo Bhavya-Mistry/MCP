@@ -1,5 +1,4 @@
 import asyncio
-from icecream import ic
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 
