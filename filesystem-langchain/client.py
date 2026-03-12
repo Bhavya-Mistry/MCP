@@ -7,7 +7,6 @@ from dotenv import load_dotenv
 import os
 import asyncio
 
-from sympy import true
 
 load_dotenv()
 
@@ -45,24 +44,18 @@ async def main():
     )
 
     tools = await client.get_tools()
-    ic(tools)
-    print("_" * 80)
 
     model = ChatGroq(model="openai/gpt-oss-20b", api_key=API_KEY)
-    ic(model)
-    print("_" * 80)
 
     agent = create_agent(
         model, tools, system_prompt="ONLY USE AVAILABLE TOOLS AND REPLY NOTHING ELSE"
     )
-    ic(agent)
-    print("_" * 80)
 
-    ic("Enter EXIT to quit")
+    print("Type 'exit' to quit")
 
     while True:
         user_prompt = input("User:\n")
-
+        print("\n\n")
         if user_prompt.lower() == "exit":
             break
 
@@ -70,7 +63,7 @@ async def main():
             response = await agent.ainvoke(
                 {"messages": [{"role": "user", "content": user_prompt}]}
             )
-            ic("Agent:", response["messages"][-1].content)
+            print("Agent:\n", response["messages"][-1].content, "\n\n")
         except Exception as e:
             ic(e)
 

@@ -1,0 +1,8 @@
+groq
+icecream
+langchain
+langchain-groq
+langchain-mcp-adapters
+langgraph
+mcp
+pymupdf

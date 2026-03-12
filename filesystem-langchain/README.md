@@ -1,8 +1,8 @@
 # 🤖 LangChain MCP Agent
 
-A modular AI agent system that connects a **LangChain-powered LLM** to an **MCP (Model Context Protocol) tool server** via streamable HTTP. The agent discovers available tools at runtime and uses them to respond to user prompts — no hardcoded tool logic in the client.
+A modular AI agent system that connects a **LangChain-powered LLM** to an **MCP (Model Context Protocol) tool server** via streamable HTTP. The agent discovers available tools at runtime and uses them to respond to user prompts; no hardcoded tool logic in the client.
 
----
+
 
 ## 📐 Architecture Overview
 
@@ -15,96 +15,73 @@ A modular AI agent system that connects a **LangChain-powered LLM** to an **MCP 
 │                    │                                        │
 │                    ▼                                        │
 │   [LangChain Agent]                                         │
-│       └─> model: ChatGroq (openai/gpt-oss-20b)             │
+│       └─> model: ChatGroq (openai/gpt-oss-20b)              │
 │       └─> tools: fetched dynamically from MCP server        │
-│       └─> system_prompt: "ONLY USE AVAILABLE TOOLS..."      │
+│       └─> system_prompt                                     │
 │                    │                                        │
 │                    ▼                                        │
 │   [MultiServerMCPClient]                                    │
 │       └─> transport: streamable_http                        │
-│       └─> url: http://127.0.0.1:8000/mcp                   │
+│       └─> url: http://127.0.0.1:8000/mcp                    │
 └────────────────────┬────────────────────────────────────────┘
                      │  HTTP (Streamable MCP Protocol)
                      ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                        SERVER SIDE                          │
 │                                                             │
-│   [FastMCP Server]  ← mcp.run(transport="streamable-http") │
+│   [FastMCP Server]  ← mcp.run(transport="streamable-http")  │
 │       │                                                     │
-│       ├─> add(a, b)          → returns int                  │
-│       ├─> multiply(a, b)     → returns int                  │
-│       ├─> list_files(dir)    → returns str                  │
-│       ├─> read_files(path)   → returns str                  │
-│       ├─> file_info(path)    → returns dict                 │
-│       └─> search_files(dir, keyword) → returns dict         │
+│       ├─> add(a, b)                   → returns int         │
+│       ├─> multiply(a, b)              → returns int         │
+│       ├─> list_files(dir)             → returns str         │
+│       ├─> read_files(path)            → returns str         │
+│       ├─> file_info(path)             → returns dict        │
+│       └─> search_files(dir, keyword)  → returns dict        │
 └─────────────────────────────────────────────────────────────┘
 ```
 
----
+
 
 ## 🔄 Full Execution Flow
 
 ```
 [User Input]
-  └─> user_prompt = input("User:\n")
+  └─> Prompt is read from the terminal
 
              │
              ▼
-[MultiServerMCPClient — Tool Discovery]
-  └─> client = MultiServerMCPClient({
-        "add":          { url, transport },
-        "multiply":     { url, transport },
-        "list_files":   { url, transport },
-        "read_files":   { url, transport },
-        "file_info":    { url, transport },
-        "search_files": { url, transport },
-      })
-  └─> tools = await client.get_tools()
-        - Tools are fetched live from the MCP server
-        - Each tool includes name, description, and input schema
+[Tool Discovery]
+  └─> Client connects to the MCP server over streamable HTTP
+  └─> All 6 tools are fetched dynamically with their schemas
+  └─> No tools are hardcoded on the client side
 
              │
              ▼
 [Agent Construction]
-  └─> model = ChatGroq(model="openai/gpt-oss-20b", api_key=API_KEY)
-  └─> agent = create_agent(
-        model,
-        tools,
-        system_prompt="ONLY USE AVAILABLE TOOLS AND REPLY NOTHING ELSE"
-      )
-        - Agent binds model + tools into a ReAct-style executor
+  └─> A ChatGroq model is loaded with the API key
+  └─> The agent is assembled with the model, discovered tools, and a system prompt
+  └─> System prompt restricts the agent to tool-only responses
 
              │
              ▼
 [Agent Invocation]
-  └─> response = await agent.ainvoke({
-        "messages": [{"role": "user", "content": user_prompt}]
-      })
-        - LLM decides which tool to call based on the prompt
-        - Tool arguments are inferred from context
-        - MCP client routes the call to the server
+  └─> The user prompt is passed to the agent as a message
+  └─> The LLM selects the appropriate tool based on intent
+  └─> Tool arguments are inferred automatically from the prompt
+  └─> The MCP client routes the call to the correct server endpoint
 
              │
              ▼
 [MCP Tool Execution — Server Side]
-  └─> FastMCP receives the tool call over streamable HTTP
-  └─> Executes the registered Python function
-  └─> Returns result back to the agent
-
-             │
-             ▼
-[Agent Response]
-  └─> response["messages"][-1].content
-        - The final message content from the agent
-        - Contains the tool result or composed answer
+  └─> FastMCP receives the tool name and arguments over HTTP
+  └─> The matching Python function is executed
+  └─> The result is streamed back to the agent
 
              │
              ▼
 [Display to User]
-  └─> ic("Agent:", response["messages"][-1].content)
+  └─> The final message from the agent is printed to the terminal
 ```
-
----
 
 ## 🛠️ Available Tools
 
@@ -119,7 +96,7 @@ All tools are registered on the **FastMCP server** and exposed over `streamable-
 | `file_info` | `file_info(path: str) -> dict` | Get metadata: size, type, last modified |
 | `search_files` | `search_files(directory: str, keyword: str) -> dict` | Search files for a keyword match |
 
----
+
 
 ## 📁 Project Structure
 
@@ -133,30 +110,17 @@ project/
 └── README.md
 ```
 
----
+
 
 ## ⚙️ Setup
 
-### 1. Clone the repository
+### 1. Install dependencies
 
 ```bash
-git clone https://github.com/your-username/your-repo.git
-cd your-repo
+uv add -r requirements.txt
 ```
 
-### 2. Install dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-Or manually:
-
-```bash
-pip install langchain-mcp-adapters langchain langchain-groq fastmcp icecream python-dotenv sympy
-```
-
-### 3. Configure environment variables
+### 2. Configure environment variables
 
 Create a `.env` file in the project root:
 
@@ -164,14 +128,12 @@ Create a `.env` file in the project root:
 API_KEY=your_groq_api_key_here
 ```
 
----
-
 ## 🚀 Running the Project
 
 ### Step 1 — Start the MCP server
 
 ```bash
-python server.py
+uv run server.py
 ```
 
 The server starts at `http://127.0.0.1:8000/mcp` using the `streamable-http` transport.
@@ -185,7 +147,7 @@ The server starts at `http://127.0.0.1:8000/mcp` using the `streamable-http` tra
 In a separate terminal:
 
 ```bash
-python client.py
+uv run client.py
 ```
 
 You'll see tool discovery output, then an interactive prompt:
@@ -197,6 +159,7 @@ User:
 ### Step 3 — Chat with the agent
 
 ```
+Type `exit` to quit.
 User:
 add 17 and 25
 
@@ -213,57 +176,3 @@ User:
 exit
 ```
 
-Type `exit` to quit.
-
----
-
-## 💡 Example Prompts
-
-| Prompt | Tool Used | Result |
-|--------|-----------|--------|
-| `add 5 and 3` | `add` | `8` |
-| `multiply 6 by 7` | `multiply` | `42` |
-| `list files in /home/user/docs` | `list_files` | List of filenames |
-| `read the file /tmp/notes.txt` | `read_files` | File contents |
-| `get info about /etc/hosts` | `file_info` | `{size_bytes, is_directory, last_modified}` |
-| `search /home/user for the word "TODO"` | `search_files` | `{matches: ["todo.txt"]}` |
-
----
-
-## 🔑 Key Design Decisions
-
-```
-[Why MultiServerMCPClient?]
-  └─> Each tool key maps to the same server URL
-  └─> Allows per-tool routing if servers ever split
-  └─> Tools are discovered dynamically — no hardcoding
-
-[Why streamable_http transport?]
-  └─> Persistent-friendly, works over standard HTTP
-  └─> Compatible with FastMCP's streamable-http mode
-  └─> Easy to proxy or deploy behind a gateway
-
-[Why system_prompt = "ONLY USE AVAILABLE TOOLS"?]
-  └─> Prevents the LLM from hallucinating free-text answers
-  └─> Forces structured, tool-grounded responses only
-```
-
----
-
-## 📦 Requirements
-
-```
-langchain
-langchain-mcp-adapters
-langchain-groq
-fastmcp
-icecream
-python-dotenv
-sympy
-```
-
----
-
-## 📄 License
-
-MIT License. See [LICENSE](LICENSE) for details.
