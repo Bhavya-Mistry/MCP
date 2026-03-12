@@ -106,7 +106,7 @@ All tools are registered on the **FastMCP server** and exposed over `streamable-
 ## 📁 Project Structure
 
 ```
-mail_system/
+project_root/
 │
 ├── main.py            # FastMCP tool server (email + GitHub + filesystem tools)
 ├── client.py          # LangChain agent + MCP client
@@ -129,7 +129,7 @@ uv add -r requirements.txt
 
 ### 2. Configure environment variables
 
-Create a `.env` file in the `mail_system` directory:
+Create a `.env` file in the `project_root` directory:
 
 ```env
 # Email (SMTP)
@@ -197,7 +197,7 @@ list the files in C:\Users\bhavya.mistry\Documents\GitHub\MCP
 
 Agent: .git
        .gitignore
-       mail_system
+       my-project
        tutorial-one
        ...
 
@@ -209,7 +209,7 @@ exit
 
 ## 🖥️ Alternative Setup — Use with Claude Desktop
 
-From the `mail_system` directory, run:
+From the `project_root` directory, run:
 
 ```bash
 uv run mcp install main.py
