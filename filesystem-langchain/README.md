@@ -203,3 +203,8 @@ uv run mcp install server.py
 
 > This is the quickest way to use the server if you already have Claude Desktop installed.
 
+## 🎬 Demo
+
+![Demo 1](./demo/gif1.gif)
+
+![Demo 2](./demo/gif2.gif)

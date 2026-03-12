@@ -55,7 +55,7 @@ async def main():
 
     while True:
         user_prompt = input("User:\n")
-        print("\n\n")
+        print("\n")
         if user_prompt.lower() == "exit":
             break
 
@@ -63,7 +63,7 @@ async def main():
             response = await agent.ainvoke(
                 {"messages": [{"role": "user", "content": user_prompt}]}
             )
-            print("Agent:\n", response["messages"][-1].content, "\n\n")
+            print("Agent:\n", response["messages"][-1].content, "\n")
         except Exception as e:
             ic(e)
 

@@ -32,7 +32,7 @@ def read_files(path: str) -> str:
 
 @mcp.tool()
 def file_info(path: str) -> dict:
-    """Returns metadata about a file"""
+    """Returns metadata/information about a file"""
 
     stat = os.stat(path)
 
