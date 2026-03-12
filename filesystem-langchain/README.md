@@ -176,7 +176,6 @@ exit
 
 ## 🖥️ Alternative Setup — Use with Claude Desktop
 
-You can skip the client entirely and connect the MCP server directly to **Claude Desktop**.
 
 From the project root, run:
 
