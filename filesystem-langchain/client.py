@@ -16,27 +16,7 @@ API_KEY = os.getenv("API_KEY")
 async def main():
     client = MultiServerMCPClient(
         {
-            "add": {
-                "url": "http://127.0.0.1:8000/mcp",
-                "transport": "streamable_http",
-            },
-            "multiply": {
-                "url": "http://127.0.0.1:8000/mcp",
-                "transport": "streamable_http",
-            },
-            "list_files": {
-                "url": "http://127.0.0.1:8000/mcp",
-                "transport": "streamable_http",
-            },
-            "read_files": {
-                "url": "http://127.0.0.1:8000/mcp",
-                "transport": "streamable_http",
-            },
-            "file_info": {
-                "url": "http://127.0.0.1:8000/mcp",
-                "transport": "streamable_http",
-            },
-            "search_files": {
+            "filesystem": {
                 "url": "http://127.0.0.1:8000/mcp",
                 "transport": "streamable_http",
             },
