@@ -109,9 +109,8 @@ project/
 └── README.md
 ```
 
-> You can skip this setup phase and jump to next section if you have **Claude Desktop** installed in your system
-
 ## ⚙️ Setup
+> You can skip this setup phase and jump to next section if you have **Claude Desktop** installed in your system
 
 ### 1. Install dependencies
 
